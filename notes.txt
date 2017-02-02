@@ -106,6 +106,7 @@ heroku buildpacks:clear
 heroku buildpacks:set heroku/nodejs
 heroku buildpacks:add heroku/ruby --index 2
 
+heroku config:set NODE_ENV=production
 
 the build is made from the package, we need to have the devDependencies installed
 heroku config:set NPM_CONFIG_PRODUCTION=false
