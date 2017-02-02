@@ -1,0 +1,141 @@
+var path = require('path');
+var webpack = require('webpack');
+var autoprefixer = require('autoprefixer');
+var StatsPlugin = require('stats-webpack-plugin');
+const ExtractTextPlugin = require("extract-text-webpack-plugin");
+
+
+// must match config.webpack.dev_server.port
+var devServerPort = 3808;
+
+// set NODE_ENV=production on the environment to add asset fingerprints
+var production = process.env.NODE_ENV === 'production';
+
+var config = {
+    context: __dirname + "/../",
+    entry: {
+        global: "./webpack/application.js",
+        // Sources are expected to live in $app_root/webpack
+        // 'application': './webpack/application.js'
+    },
+
+    output: {
+        // Build assets directly in to public/webpack/, let webpack know
+        // that all webpacked assets start with webpack/
+
+        // must match config.webpack.output_dir
+        path: path.join(__dirname, '..', 'public', 'webpack'),
+        publicPath: '/webpack/',
+
+        filename: production ? '[name]-[chunkhash].js' : '[name].js'
+    },
+
+    resolve: {
+        modules: [
+            path.resolve(__dirname, "webpack"),
+            path.resolve(__dirname, "node_modules"),
+            path.resolve(__dirname, "lib/assets"),
+            path.resolve(__dirname, "vendor/assets/javascripts")],
+        alias: {
+            jquery: 'jquery/dist/jquery',
+            stellar: "jquery.stellar/jquery.stellar"
+        }
+    },
+
+
+    externals: {
+        // This mean that require('jquery') will refer to global var jQuery
+        'jquery': 'jQuery'
+    },
+
+    module: {
+        loaders: [
+            // Process .js and .jsx files for ES6 and React
+            {
+                test: /\.js$/,
+                exclude: /(node_modules)/,
+                loader: "babel?presets[]=react,presets[]=es2015"
+            },
+            // Embed images
+            {
+                test: /\.(jpe?g|png|gif|svg)$/i,
+                loader: 'file?name=images/[name].[ext]'
+            },
+            // Process normal CSS files
+            { test: /\.scss$/, use: ExtractTextPlugin.extract({
+                fallbackLoader: "style-loader",
+                loaders: ["css-loader?sourceMap", 'sass-loader?sourceMap'],
+                publicPath: "../"
+            })
+            },
+            {
+                test: /\.acss$/, // Only .css files
+                loader: ExtractTextPlugin.extract("style!css!resolve-url")
+                //, loaders: ['style-loader', 'css-loader', 'resolve-url-loader', 'postcss-loader']
+                //loader: 'style!css!postcss'
+            },
+            // Process SASS files
+            {
+                test: /\.ascss$/,
+                loader: ExtractTextPlugin.extract("style!css!resolve-url!sass")
+                //loaders: ['style-loader', 'css-loader', 'resolve-url-loader', 'sass-loader?sourceMap', 'postcss-loader']
+                //loader: 'style!css!sass!postcss'
+            },
+            // Embed fonts
+            {
+                test: /\.(woff|svg|ttf|eot)([\?]?.*)$/,
+                loader: "file?name=fonts/[name].[ext]"
+            }
+        ]
+    },
+
+
+    plugins: [
+        new ExtractTextPlugin(production ? '[name]-[chunkhash].css' : '[name].css'),
+        // if you want a module available as variable in every module,
+        // such as making $ and jQuery available in every module without writing require("jquery").
+        // You should use ProvidePlugin.
+        // Expose some modules globally to every module (so you don't have to explicitly require them)
+        new webpack.ProvidePlugin({
+            $: "jquery",
+            jQuery: "jquery",
+            jquery: "jquery",
+            "window.jQuery": "jquery",
+            React: "react"
+        }),
+        // must match config.webpack.manifest_filename
+        new StatsPlugin('manifest.json', {
+            // We only need assetsByChunkName
+            chunkModules: false,
+            source: false,
+            chunks: false,
+            modules: false,
+            assets: true
+        })]
+};
+
+if (production) {
+
+    config.plugins.push(
+        new webpack.NoErrorsPlugin(),
+        new webpack.optimize.UglifyJsPlugin({
+            compressor: { warnings: false },
+            sourceMap: false
+        }),
+        new webpack.DefinePlugin({
+            'process.env': { NODE_ENV: JSON.stringify('production') }
+        }),
+        new webpack.optimize.DedupePlugin(),
+        new webpack.optimize.OccurenceOrderPlugin()
+    );
+} else {
+    config.devServer = {
+        port: devServerPort,
+        headers: { 'Access-Control-Allow-Origin': '*' }
+    };
+    config.output.publicPath = '//localhost:' + devServerPort + '/webpack/';
+    // Source maps
+    config.devtool = 'cheap-module-eval-source-map';
+}
+
+module.exports = config;

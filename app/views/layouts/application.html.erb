@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>RailsWebpack</title>
+    <%= csrf_meta_tags %>
+
+    <% # stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track': 'reload' %>
+    <% # javascript_include_tag 'application', 'data-turbolinks-track': 'reload' %>
+
+    <%= javascript_include_tag *webpack_asset_paths('global', extension: 'js') %>
+    <%= stylesheet_link_tag *webpack_asset_paths('global', extension: 'css') %>
+  </head>
+
+  <body>
+  HELLO THE WORLD
+  <span class="glyphicon glyphicon-search btn btn-primary" aria-hidden="true"></span>
+  <span class="fa fa-user" aria-hidden="true"></span>
+  <button type="button" class="btn btn-default" aria-label="Left Align">
+    <span class="glyphicon glyphicon-align-left" aria-hidden="true"></span>
+  </button>
+
+  <button type="button" class="btn btn-default btn-lg">
+    <span class="glyphicon glyphicon-star" aria-hidden="true"></span> Star
+  </button>
+
+
+  <div class="summernote">Hello Summernote</div>
+
+  <script>
+    $(document).ready(function() {
+      // document.addEventListener("turbolinks:load", function() {
+      $('.summernote').summernote({
+        // adjust initial height for the Summernote Editor
+        height: '200px'
+      });
+
+    });
+  </script>
+
+    <%= yield %>
+  </body>
+</html>
