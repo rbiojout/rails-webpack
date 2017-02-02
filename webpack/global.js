@@ -47,6 +47,10 @@ require('bootstrap-sass/assets/javascripts/bootstrap/dropdown.js');
 require('bootstrap-sass/assets/javascripts/bootstrap/tooltip.js');
 require('summernote/dist/summernote');
 
+
+
+// require('material-kit-free/assets/js/material-kit');
+
 // import './global.scss';
 
 console.log("Hello the world!");

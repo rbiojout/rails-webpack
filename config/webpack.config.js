@@ -36,11 +36,13 @@ var config = {
     },
 
     resolve: {
+        modulesDirectories: ["webpack", "node_modules", "vendor/assets/javascripts", "vendor/assets/stylesheets"],
         modules: [
             path.resolve(__dirname, "webpack"),
             path.resolve(__dirname, "node_modules"),
             path.resolve(__dirname, "lib/assets"),
-            path.resolve(__dirname, "vendor/assets/javascripts")],
+            path.resolve(__dirname, "vendor/assets/javascripts"),
+            path.resolve(__dirname, "vendor/assets/stylesheets")],
         alias: {
             jquery: 'jquery/dist/jquery',
             stellar: "jquery.stellar/jquery.stellar"
@@ -64,6 +66,11 @@ var config = {
             // Embed images
             {
                 test: /\.(jpe?g|png|gif|svg)$/i,
+                loader: 'file?name=images/[name].[ext]'
+            },
+            // Embed cursor pointers in Css
+            {
+                test: /\.(cur)$/i,
                 loader: 'file?name=images/[name].[ext]'
             },
             // Process normal CSS files

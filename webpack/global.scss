@@ -11,6 +11,12 @@ $icon-font-path: "~bootstrap-sass/assets/fonts/bootstrap/";
 @import "~bootstrap-sass/assets/stylesheets/bootstrap";
 
 
+
+// in vendor
+// @import "~material-kit-free/assets/sass/material-kit.scss";
+
+@import "~summernote/dist/summernote";
+
 // bootstrap
 // $icon-font-path: '~bootstrap-sass/assets/fonts/bootstrap/';
 // @import '~bootstrap-sass/assets/shared/_bootstrap.scss';
